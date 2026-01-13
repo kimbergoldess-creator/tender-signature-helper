@@ -6,6 +6,37 @@ A tiny, offline-friendly web tool to help teams decide **who must sign which ten
 - Delegate authorization rules (area + max amount)
 - A checklist of documents to send for signature (select only what you need)
 
+## Why this exists
+
+This tool was born out of real operational pain.
+
+I have spent over 20 years working in commercial back-office and tender-related roles, where internal policies, signature rules, and authorization thresholds are often complex, fragmented, and poorly accessible to the people who actually need them on a daily basis.
+
+In many organizations, commercial assistants are expected to:
+- interpret internal policies and powers of attorney,
+- remember thresholds and exceptions,
+- and make correct decisions under time pressure,
+
+even though these rules are usually documented in long, static documents that are rarely read, hard to interpret, and easy to misapply.
+
+This project applies a **poka-yoke (error-proofing) approach** to a very specific niche problem:  
+turning internal rules into deterministic, easy-to-use decisions that prevent mistakes before they happen.
+
+The idea is deliberately simple:
+instead of asking people to “understand the policy”, the system asks for a few structured inputs and returns a clear, actionable answer.
+
+My background sits at the intersection of:
+- **commercial operations** (20+ years in back-office and tender workflows),
+- **social sciences** (political science, economics, and law),
+- **logic and technology** (rule-based reasoning, structured decision flows, and AI-assisted development).
+
+This cross-domain perspective is the real value behind the tool:
+understanding how organizations work, how rules are created, and how humans actually interact with systems — then translating all of that into practical, usable logic.
+
+This repository is not about building a large-scale platform.
+It is about showing how small, well-designed tools can reduce cognitive load, prevent errors, and bridge the gap between policy, technology, and real work.
+
+
 ## Features
 - One single file `index.html` (no build, no dependencies)
 - Calculates signer:
