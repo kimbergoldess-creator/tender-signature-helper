@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tender Signature Helper</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#3F3F3E;
+      --muted:#6e6e6e;
+
+      --primary:#099683;
+      --primary-2:#069782;
+      --primary-3:#046E5F;
+
+      --border:#e7e7e7;
+      --surface:#ffffff;
+
+      --radius:14px;
+      --radius-sm:12px;
+      --shadow:0 8px 22px rgba(17, 24, 39, .06);
+      --shadow-btn:0 10px 22px rgba(9, 150, 131, .18);
+    }
+
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    body{
+      font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{ max-width:1200px; margin:24px auto; padding:0 16px; }
+    h1{ font-size:20px; margin:0 0 12px; font-weight:700; letter-spacing:.2px; }
+
+    .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
+    @media(min-width:1080px){ .grid{ grid-template-columns:460px 1fr; } }
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .muted{ color:var(--muted); font-size:12px; line-height:1.35; }
+    .small{ color:var(--muted); font-size:12px; }
+
+    label{ display:block; font-size:12px; color:var(--muted); margin:12px 0 6px; }
+
+    input, select, textarea{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      font-size:14px;
+      background:#fff;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(9,150,131,.55);
+      box-shadow:0 0 0 3px rgba(9,150,131,.14);
+    }
+
+    textarea{ min-height:120px; resize:vertical; }
+
+    .row{ display:grid; grid-template-columns:1fr; gap:10px; }
+    @media(min-width:520px){ .row{ grid-template-columns:1fr 1fr; } }
+
+    .btns{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+
+    button{
+      border:1px solid transparent;
+      background:#f4f6f6;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      color:var(--text);
+      min-height:40px;
+      transition:transform .06s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+    }
+    button:hover{ background:#eef2f2; }
+    button:active{ transform:translateY(1px); }
+
+    button.primary{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:var(--shadow-btn);
+    }
+    button.primary:hover{ background:var(--primary-2); }
+    button.primary:active{ background:var(--primary-3); }
+
+    button.ghost{
+      background:#fff;
+      border-color:var(--border);
+    }
+    button.ghost:hover{ border-color:rgba(9,150,131,.35); background:rgba(9,150,131,.05); }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:13px;
+    }
+    .ok{ color:#0a7a2f; }
+    .warn{ color:#9a5b00; }
+    .bad{ color:#9a0000; }
+
+    .inlinecheck{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:10px 12px;
+      background:#fff;
+      margin-top:10px;
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .inlinecheck input{ width:auto; margin-top:2px; }
+
+    .docbox{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:10px 12px;
+      background:#fff;
+      margin-top:10px;
+      max-height:360px;
+      overflow:auto;
+    }
+
+    .docsec{ margin:10px 0 6px; font-weight:800; font-size:12px; color:#333; }
+    .docitem{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:6px 6px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .docitem:hover{ background:rgba(9,150,131,.06); }
+    .docitem input{ width:auto; margin-top:2px; }
+
+    .docname{ font-size:13px; line-height:1.25; }
+    .tag{
+      display:inline-block;
+      font-size:11px;
+      color:var(--primary-3);
+      border:1px solid rgba(9,150,131,.28);
+      padding:2px 8px;
+      border-radius:999px;
+      background:rgba(9,150,131,.06);
+      margin-left:8px;
+      font-weight:700;
+    }
+
+    table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+    th,td{ border-bottom:1px solid var(--border); padding:8px; vertical-align:top; text-align:left; }
+    th{ color:var(--muted); font-weight:800; }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>Tender Signature Helper</h1>
+
+  <div class="grid">
+    <!-- LEFT: INPUTS -->
+    <div class="card">
+      <div class="muted">
+        Enter tender data, select documents to send for signature, then generate a signer table + email-ready text.
+      </div>
+
+      <label>Tender subject</label>
+      <input id="subject" placeholder="e.g., Supply of equipment — Lot 2" />
+
+      <div class="row">
+        <div>
+          <label>Customer / Contracting entity</label>
+          <input id="customer" placeholder="e.g., Municipality of ..." />
+        </div>
+        <div>
+          <label>Tender amount (€)</label>
+          <input id="amount" inputmode="decimal" placeholder="e.g., 1250000" />
+          <div class="small">Tip: numbers only (no separators).</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Business area</label>
+          <select id="area"></select>
+        </div>
+        <div>
+          <label>Area manager</label>
+          <input id="am" placeholder="Name Surname" />
+        </div>
+      </div>
+
+      <div class="inlinecheck">
+        <input id="amOk" type="checkbox" />
+        <div>
+          <div style="font-weight:800;">AM OK to proceed</div>
+          <div class="small">Check when the Area Manager approves participation in the procedure.</div>
+        </div>
+      </div>
+
+      <label>Notes (optional)</label>
+      <input id="notes" placeholder="e.g., Signature needed by..." />
+
+      <label>Documents to send for signature</label>
+      <div class="btns" style="margin-top:6px;">
+        <button class="ghost" id="selAll">Select all</button>
+        <button class="ghost" id="selNone">Select none</button>
+        <button class="ghost" id="selCond">Only conditional</button>
+      </div>
+
+      <div id="docList" class="docbox"></div>
+
+      <div class="btns">
+        <button class="primary" id="calc">Calculate signers</button>
+        <button class="ghost" id="reset">Reset</button>
+      </div>
+
+      <div class="small" style="margin-top:10px;">
+        Runs locally in your browser. No network calls. No stored data.
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT -->
+    <div class="card">
+      <div id="result"></div>
+
+      <div class="btns" style="margin-top:10px;">
+        <button class="primary" id="copyTsv">Copy table (TSV)</button>
+        <button class="primary" id="copyMail">Copy email text</button>
+      </div>
+
+      <label>Email preview (copy/paste)</label>
+      <textarea id="mailOut" class="mono" readonly></textarea>
+
+      <div class="muted" style="margin-top:10px;">
+        Tip: paste the TSV table into Excel/Outlook for quick formatting.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG — ANONYMIZED
+   Edit these arrays to match your real-world rules.
+   ========================================================= */
+
+/** Delegates:
+ * - area: business area label
+ * - max: max amount authorized in that area
+ */
+const DELEGATES = [
+  { name: "DELEGATE_A", area: "AREA_1", max: 5000000 },
+  { name: "DELEGATE_B", area: "AREA_2", max: 5000000 },
+  { name: "DELEGATE_C", area: "AREA_2", max: 20000000 },
+  { name: "DELEGATE_D", area: "AREA_3", max: 5000000 }
+];
+
+/** Documents:
+ * rule:
+ *  - "LR"          : always legal representative
+ *  - "DEL"         : always delegate (picked by rules)
+ *  - "COND_AMOUNT" : delegate if authorized for that area/amount, else LR
+ */
+const DOCUMENTS = [
+  { id:"ADM1", section:"ADMIN",    name:"Participation request + exclusion declaration", rule:"LR" },
+  { id:"ADM2", section:"ADMIN",    name:"Standard declaration form", rule:"LR" },
+  { id:"ADM3", section:"ADMIN",    name:"Authority portal registration", rule:"DEL" },
+  { id:"ADM4", section:"ADMIN",    name:"Company registry substitute declaration", rule:"LR" },
+  { id:"ADM5", section:"ADMIN",    name:"Whitelist declaration", rule:"DEL" },
+  { id:"ADM6", section:"ADMIN",    name:"General supply conditions", rule:"DEL" },
+  { id:"ADM7", section:"ADMIN",    name:"Contract draft acceptance clauses", rule:"DEL" },
+  { id:"ADM8", section:"ADMIN",    name:"Financial traceability declaration", rule:"LR" },
+
+  { id:"TEC1", section:"TECHNICAL",name:"Technical drawings / schematics", rule:"DEL" },
+  { id:"TEC2", section:"TECHNICAL",name:"Product origin declaration", rule:"DEL" },
+  { id:"TEC3", section:"TECHNICAL",name:"Technical offer", rule:"DEL" },
+  { id:"TEC4", section:"TECHNICAL",name:"Site visit delegation", rule:"DEL" },
+
+  { id:"ECO1", section:"ECONOMIC", name:"Economic offer", rule:"COND_AMOUNT" },
+  { id:"ECO2", section:"ECONOMIC", name:"Price summary", rule:"DEL" },
+
+  { id:"FIN1", section:"FINALIZATION", name:"Contract acceptance", rule:"COND_AMOUNT" },
+  { id:"FIN2", section:"FINALIZATION", name:"Insurance policy (ad hoc)", rule:"LR" },
+  { id:"FIN3", section:"FINALIZATION", name:"Contract contacts", rule:"DEL" }
+];
+
+const LEGAL_REP_LABEL = "LEGAL_REPRESENTATIVE";
+
+/* =========================
+   LOGIC
+   ========================= */
+const el = (id) => document.getElementById(id);
+
+function formatEuro(n){
+  if (!Number.isFinite(n)) return "";
+  return n.toLocaleString("it-IT", { style:"currency", currency:"EUR", maximumFractionDigits:0 });
+}
+
+function uniqueAreas(){
+  return [...new Set(DELEGATES.map(d => d.area))].sort();
+}
+
+function pickDelegate(area, amount){
+  const candidates = DELEGATES.filter(d => d.area === area).sort((a,b)=>a.max-b.max);
+  return candidates.find(d => amount <= d.max) || null;
+}
+
+function resolveSigner(rule, area, amount){
+  if (rule === "LR") return { who: LEGAL_REP_LABEL, why:"Fixed signer" };
+
+  if (rule === "DEL") {
+    const del = pickDelegate(area, amount);
+    if (!del) return { who: LEGAL_REP_LABEL, why:"No delegate covers this area/amount" };
+    return { who: del.name, why:`Delegate authorized up to ${formatEuro(del.max)}` };
+  }
+
+  // COND_AMOUNT
+  const del = pickDelegate(area, amount);
+  if (!del) return { who: LEGAL_REP_LABEL, why:"Amount above thresholds (or no delegate for area)" };
+  return { who: del.name, why:`Conditional: covered up to ${formatEuro(del.max)}` };
+}
+
+function buildTSV(rows){
+  const header = ["Section","Document","Signer","Reason"];
+  const lines = [header.join("\t")];
+  for (const r of rows){
+    lines.push([r.section, r.name, r.signer, r.why].join("\t"));
+  }
+  return lines.join("\n");
+}
+
+function getSelectedDocIds(){
+  return [...document.querySelectorAll('input[data-doc-id]')]
+    .filter(x => x.checked)
+    .map(x => x.getAttribute("data-doc-id"));
+}
+
+function buildMail({subject, customer, amount, area, am, amOk, notes, delegatePicked, aboveThreshold, tsv}){
+  const subj = `Signature request — ${customer || "Customer"} — ${subject || "Tender"} (${formatEuro(amount) || "Amount"})`;
+  const amOkTxt = amOk ? "YES" : "NO";
+
+  const body = [
+    "Hello,",
+    "",
+    "Please sign the tender documents as per the summary below.",
+    "",
+    `• Tender subject: ${subject || "-"}`,
+    `• Customer: ${customer || "-"}`,
+    `• Business area: ${area || "-"}`,
+    `• Area manager: ${am || "-"}`,
+    `• AM OK to proceed: ${amOkTxt}`,
+    `• Amount: ${formatEuro(amount) || "-"}`,
+    delegatePicked ? `• Delegate selected (rules): ${delegatePicked}` : `• Delegate selected (rules): -`,
+    `• Threshold outcome: ${aboveThreshold ? "Above thresholds → LR where applicable" : "Within thresholds → Delegate where applicable"}`,
+    notes ? `• Notes: ${notes}` : null,
+    "",
+    "Signature summary:",
+    "",
+    tsv || "(no document selected)",
+    "",
+    "Thanks,",
+    ""
+  ].filter(Boolean).join("\n");
+
+  return { subj, body };
+}
+
+/* =========================
+   UI: document list
+   ========================= */
+function renderDocList(defaultChecked=true){
+  const bySection = new Map();
+  for (const d of DOCUMENTS){
+    if (!bySection.has(d.section)) bySection.set(d.section, []);
+    bySection.get(d.section).push(d);
+  }
+
+  const container = el("docList");
+  container.innerHTML = "";
+
+  for (const [section, docs] of bySection.entries()){
+    const sec = document.createElement("div");
+    sec.className = "docsec";
+    sec.textContent = section;
+    container.appendChild(sec);
+
+    for (const d of docs){
+      const wrap = document.createElement("label");
+      wrap.className = "docitem";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = defaultChecked;
+      cb.setAttribute("data-doc-id", d.id);
+
+      const name = document.createElement("div");
+      name.className = "docname";
+      name.textContent = d.name;
+
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = d.rule === "LR" ? "LR" : (d.rule === "DEL" ? "DEL" : "COND");
+      name.appendChild(tag);
+
+      wrap.appendChild(cb);
+      wrap.appendChild(name);
+      container.appendChild(wrap);
+    }
+  }
+}
+
+function setAllDocs(value){
+  document.querySelectorAll('input[data-doc-id]').forEach(x => x.checked = value);
+}
+
+function setOnlyConditional(){
+  document.querySelectorAll('input[data-doc-id]').forEach(x => {
+    const id = x.getAttribute("data-doc-id");
+    const d = DOCUMENTS.find(dd => dd.id === id);
+    x.checked = (d && d.rule === "COND_AMOUNT");
+  });
+}
+
+/* =========================
+   MAIN RENDER
+   ========================= */
+function render(){
+  const subject = el("subject").value.trim();
+  const customer = el("customer").value.trim();
+  const am = el("am").value.trim();
+  const amOk = el("amOk").checked;
+  const notes = el("notes").value.trim();
+  const area = el("area").value;
+  const amountRaw = el("amount").value.trim();
+  const amount = Number(amountRaw);
+
+  if (!area){
+    el("result").innerHTML = `<div class="pill warn">Select a business area to continue.</div>`;
+    el("mailOut").value = "";
+    return;
+  }
+  if (!Number.isFinite(amount) || amount <= 0){
+    el("result").innerHTML = `<div class="pill warn">Enter a valid amount (numbers only).</div>`;
+    el("mailOut").value = "";
+    return;
+  }
+
+  const selectedIds = new Set(getSelectedDocIds());
+  if (selectedIds.size === 0){
+    el("result").innerHTML = `<div class="pill warn">No document selected. Please check at least one.</div>`;
+    el("mailOut").value = "";
+    return;
+  }
+
+  const del = pickDelegate(area, amount);
+  const delegatePicked = del ? del.name : null;
+  const aboveThreshold = !del;
+
+  const chosenDocs = DOCUMENTS.filter(d => selectedIds.has(d.id));
+  const rows = chosenDocs.map(d => {
+    const res = resolveSigner(d.rule, area, amount);
+    return { ...d, signer: res.who, why: res.why };
+  });
+
+  const tsv = buildTSV(rows);
+
+  const top = `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <span class="pill ${del ? 'ok':'bad'}">${del ? '✅ Delegate found' : '⛔ No delegate covers this amount/area'}</span>
+      <span class="pill">${amOk ? '<span class="ok">✅ AM OK: YES</span>' : '<span class="warn">⚠️ AM OK: NO</span>'}</span>
+      <span class="pill">Area: <b>${area}</b></span>
+      <span class="pill">Amount: <b>${formatEuro(amount)}</b></span>
+      <span class="pill">Delegate: <b>${del ? del.name : LEGAL_REP_LABEL}</b></span>
+      <span class="pill">Docs selected: <b>${rows.length}</b></span>
+    </div>
+    ${amOk ? '' : '<div class="muted"><b>Note:</b> AM OK is not checked. If it is a hard prerequisite, stop here and get approval.</div>'}
+    <div class="muted">COND docs go to the delegate only if the amount is covered; otherwise they go to the legal representative.</div>
+  `;
+
+  const table = `
+    <table>
+      <thead><tr><th>Section</th><th>Document</th><th>Signer</th><th>Reason</th></tr></thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.section}</td>
+            <td>${r.name}</td>
+            <td><b>${r.signer}</b></td>
+            <td class="small">${r.why}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    <div class="small" style="margin-top:8px;">Copy format: TSV (tab-separated). Paste into Excel/Outlook.</div>
+  `;
+
+  el("result").innerHTML = top + table;
+
+  const mail = buildMail({subject, customer, amount, area, am, amOk, notes, delegatePicked, aboveThreshold, tsv});
+  el("mailOut").value = `SUBJECT: ${mail.subj}\n\n` + mail.body;
+
+  el("copyTsv").dataset.tsv = tsv;
+  el("copyMail").dataset.mail = el("mailOut").value;
+}
+
+/* =========================
+   COPY + RESET
+   ========================= */
+async function copyText(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    alert("Copied ✅");
+  } catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    alert("Copied ✅ (fallback)");
+  }
+}
+
+function resetAll(){
+  ["subject","customer","amount","am","notes"].forEach(id => el(id).value="");
+  el("amOk").checked = false;
+  el("area").selectedIndex = 0;
+  setAllDocs(true);
+  el("result").innerHTML = `<div class="pill">Fill the form, select documents, then click “Calculate signers”.</div>`;
+  el("mailOut").value = "";
+}
+
+/* =========================
+   INIT
+   ========================= */
+(function init(){
+  const areas = uniqueAreas();
+  const sel = el("area");
+  sel.innerHTML = `<option value="" selected>— Select —</option>` +
+    areas.map(a => `<option value="${a}">${a}</option>`).join("");
+
+  renderDocList(true);
+
+  el("calc").addEventListener("click", render);
+  el("copyTsv").addEventListener("click", () => copyText(el("copyTsv").dataset.tsv || ""));
+  el("copyMail").addEventListener("click", () => copyText(el("copyMail").dataset.mail || ""));
+  el("reset").addEventListener("click", resetAll);
+
+  el("selAll").addEventListener("click", () => setAllDocs(true));
+  el("selNone").addEventListener("click", () => setAllDocs(false));
+  el("selCond").addEventListener("click", () => setOnlyConditional());
+
+  // Enter triggers render
+  ["subject","customer","amount","am","notes"].forEach(id => {
+    el(id).addEventListener("keydown", (e)=>{ if(e.key==="Enter") render(); });
+  });
+
+  resetAll();
+})();
+</script>
+</body>
+</html>
